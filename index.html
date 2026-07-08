@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bite — wireframe prototype</title>
+<style>
+  :root{
+    --ink:#2c2c2a; --muted:#6b6a64; --line:#b4b2a9; --line-soft:#d8d6cd;
+    --bg:#f4f3ee; --panel:#ffffff; --ph:#e7e5dd; --accent:#0f6e56; --accent-bg:#e1f5ee;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);}
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;cursor:pointer;}
+
+  /* ---- placeholder blocks (stand in for images) ---- */
+  .ph{background:var(--ph);border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:11px;letter-spacing:.04em;text-transform:uppercase;}
+
+  /* ---- nav ---- */
+  header{position:sticky;top:0;background:var(--panel);border-bottom:1px solid var(--line);z-index:50;}
+  .nav{max-width:1120px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;}
+  .logo{font-weight:bold;font-size:18px;letter-spacing:.02em;}
+  .nav-links{display:flex;gap:26px;font-size:14px;}
+  .nav-links a{padding:4px 0;border-bottom:2px solid transparent;}
+  .nav-links a.active{border-color:var(--ink);font-weight:bold;}
+  .nav-right{display:flex;align-items:center;gap:18px;font-size:14px;}
+  .cart-btn{position:relative;background:none;border:1px solid var(--line);border-radius:6px;padding:6px 12px;font-size:13px;}
+  .cart-count{position:absolute;top:-7px;right:-7px;background:var(--ink);color:#fff;font-size:10px;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;}
+
+  main{max-width:1120px;margin:0 auto;padding:0 24px 80px;}
+  section{display:none;}
+  section.active{display:block;}
+
+  h1,h2,h3{margin:0 0 8px;font-weight:bold;}
+  .section-title{font-size:26px;text-align:center;margin:56px 0 8px;}
+  .section-sub{font-size:14px;color:var(--muted);text-align:center;max-width:520px;margin:0 auto 28px;}
+  .eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:center;display:block;margin-bottom:6px;}
+
+  /* ---- hero ---- */
+  .hero{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;padding:56px 0;}
+  .hero .ph{height:340px;border-radius:10px;}
+  .hero h1{font-size:34px;line-height:1.15;}
+  .hero p{color:var(--muted);font-size:15px;margin:14px 0 22px;max-width:400px;}
+  .btn{display:inline-block;background:var(--ink);color:#fff;border:none;border-radius:6px;padding:12px 24px;font-size:14px;font-weight:bold;}
+  .btn.outline{background:none;color:var(--ink);border:1px solid var(--ink);}
+  .btn.block{width:100%;text-align:center;}
+
+  /* ---- product grid (shared: featured + shop) ---- */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .p-card{background:var(--panel);border:1px solid var(--line-soft);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;}
+  .p-card:hover{border-color:var(--line);}
+  .p-card .ph{height:170px;border-radius:0;position:relative;}
+  .badge{position:absolute;top:10px;left:10px;background:var(--ink);color:#fff;font-size:10px;padding:3px 8px;border-radius:4px;text-transform:none;letter-spacing:0;}
+  .p-body{padding:14px 16px 16px;}
+  .p-name{font-size:15px;font-weight:bold;margin-bottom:2px;}
+  .p-sub{font-size:12.5px;color:var(--muted);margin-bottom:8px;min-height:32px;}
+  .p-meta{display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-bottom:10px;}
+  .p-rating{color:var(--muted);font-size:12px;}
+  .p-price{font-weight:bold;}
+
+  /* ---- benefits ---- */
+  .benefits{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:40px;}
+  .benefit{border:1px solid var(--line-soft);border-radius:10px;padding:20px;background:var(--panel);}
+  .benefit .ph{height:100px;border-radius:8px;margin-bottom:14px;}
+  .benefit h3{font-size:14px;}
+  .benefit p{font-size:12.5px;color:var(--muted);margin:0;}
+
+  /* ---- testimonials ---- */
+  .testimonials{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:20px;}
+  .t-card{border:1px solid var(--line-soft);border-radius:10px;padding:18px;background:var(--panel);font-size:13px;color:var(--muted);}
+  .t-card .stars{color:var(--ink);font-size:12px;margin-bottom:8px;}
+  .center-link{display:block;text-align:center;font-size:13px;font-weight:bold;margin:8px 0 40px;text-decoration:underline;}
+
+  /* ---- subscription ---- */
+  .subscribe{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:48px;}
+  .sub-card{border:1px solid var(--line-soft);border-radius:10px;padding:20px;background:var(--panel);text-align:center;}
+  .sub-card .ph{height:60px;width:60px;border-radius:50%;margin:0 auto 12px;}
+  .sub-card h3{font-size:14px;}
+  .sub-card p{font-size:12.5px;color:var(--muted);}
+
+  /* ---- education ---- */
+  .edu{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:18px;margin-bottom:20px;}
+  .edu-card{border:1px solid var(--line-soft);border-radius:10px;overflow:hidden;background:var(--panel);}
+  .edu-card .ph{height:120px;border-radius:0;}
+  .edu-body{padding:16px;}
+  .edu-body h3{font-size:14px;}
+  .edu-body p{font-size:12.5px;color:var(--muted);margin-bottom:10px;}
+  .edu-link{font-size:12.5px;font-weight:bold;text-decoration:underline;}
+
+  /* ---- newsletter ---- */
+  .newsletter{background:var(--accent-bg);border-radius:12px;padding:40px;text-align:center;margin:40px 0;}
+  .newsletter h2{font-size:22px;}
+  .newsletter p{font-size:13px;color:var(--muted);margin-bottom:18px;}
+  .nl-form{display:flex;gap:10px;max-width:420px;margin:0 auto;}
+  .nl-form input{flex:1;padding:12px 14px;border:1px solid var(--line);border-radius:6px;font-size:14px;}
+  .nl-note{font-size:11.5px;color:var(--muted);margin-top:10px;}
+  .nl-confirm{display:none;}
+  .nl-confirm.show{display:block;}
+  .nl-confirm .check{width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:20px;}
+
+  /* ---- footer ---- */
+  footer{border-top:1px solid var(--line);margin-top:40px;}
+  .foot-inner{max-width:1120px;margin:0 auto;padding:40px 24px;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:24px;font-size:13px;}
+  .foot-inner h4{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:12px;}
+  .foot-inner a{display:block;margin-bottom:8px;color:var(--muted);}
+  .foot-inner p{color:var(--muted);font-size:12.5px;}
+
+  /* ---- shop page ---- */
+  .shop-tabs{display:flex;gap:10px;justify-content:center;margin:32px 0 28px;flex-wrap:wrap;}
+  .shop-tab{border:1px solid var(--line);background:var(--panel);border-radius:20px;padding:8px 18px;font-size:13px;}
+  .shop-tab.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .shop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-bottom:60px;}
+  .cat-group{display:none;}
+  .cat-group.active{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+
+  /* ---- product detail ---- */
+  .pdp{display:grid;grid-template-columns:1fr 1fr;gap:48px;padding:40px 0 60px;}
+  .pdp .ph{height:420px;border-radius:12px;}
+  .breadcrumb{font-size:12.5px;color:var(--muted);margin:20px 0 0;}
+  .breadcrumb a{text-decoration:underline;}
+  .pdp-badge{display:inline-block;background:var(--accent-bg);color:var(--accent);font-size:11px;font-weight:bold;padding:4px 10px;border-radius:4px;margin-bottom:10px;}
+  .pdp h1{font-size:26px;margin-bottom:4px;}
+  .pdp .tagline{color:var(--muted);font-size:14px;margin-bottom:14px;}
+  .pdp .rating{font-size:13px;color:var(--muted);margin-bottom:16px;}
+  .pdp .price{font-size:22px;font-weight:bold;margin-bottom:18px;}
+  .pdp .desc{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:24px;}
+  .qty-row{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+  .qty-box{display:flex;align-items:center;border:1px solid var(--line);border-radius:6px;}
+  .qty-box button{background:none;border:none;width:34px;height:38px;font-size:16px;}
+  .qty-box span{width:30px;text-align:center;font-size:14px;}
+  .sub-toggle{display:flex;gap:10px;margin-bottom:22px;font-size:13px;}
+  .sub-toggle label{border:1px solid var(--line);border-radius:6px;padding:10px 14px;flex:1;text-align:center;}
+  .sub-toggle input{margin-right:6px;}
+
+  /* ---- cart overlay ---- */
+  .cart-scrim{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:stretch;justify-content:flex-end;z-index:100;}
+  .cart-scrim.open{display:flex;}
+  .cart-panel{width:400px;max-width:92vw;background:var(--panel);height:100%;padding:24px;display:flex;flex-direction:column;}
+  .cart-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+  .cart-close{background:none;border:none;font-size:20px;}
+  .cart-items{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:16px;}
+  .cart-item{display:flex;gap:12px;border-bottom:1px solid var(--line-soft);padding-bottom:14px;}
+  .cart-item .ph{width:64px;height:64px;border-radius:8px;flex-shrink:0;}
+  .cart-item-info{flex:1;}
+  .cart-item-info .name{font-size:13.5px;font-weight:bold;}
+  .cart-item-info .meta{font-size:12px;color:var(--muted);}
+  .cart-item-price{font-size:13.5px;font-weight:bold;}
+  .cart-empty{color:var(--muted);font-size:13.5px;text-align:center;margin-top:40px;}
+  .cart-foot{border-top:1px solid var(--line-soft);padding-top:16px;margin-top:16px;}
+  .cart-subtotal{display:flex;justify-content:space-between;font-size:15px;font-weight:bold;margin-bottom:14px;}
+
+  /* ---- checkout ---- */
+  .checkout-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:40px;padding:40px 0 60px;}
+  .co-block{border:1px solid var(--line-soft);border-radius:10px;padding:22px;background:var(--panel);margin-bottom:20px;}
+  .co-block h3{font-size:14px;margin-bottom:14px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
+  .field{margin-bottom:12px;}
+  .field label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:5px;}
+  .field input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:6px;font-size:14px;}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .summary-row{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:8px;color:var(--muted);}
+  .summary-row.total{color:var(--ink);font-weight:bold;font-size:15px;border-top:1px solid var(--line-soft);padding-top:10px;margin-top:10px;}
+  .co-item{display:flex;gap:10px;font-size:13px;margin-bottom:10px;color:var(--muted);}
+  .co-item .ph{width:44px;height:44px;border-radius:6px;flex-shrink:0;}
+
+  /* ---- confirmation ---- */
+  .confirm{text-align:center;padding:80px 0;max-width:480px;margin:0 auto;}
+  .confirm .check{width:64px;height:64px;border-radius:50%;background:var(--accent-bg);color:var(--accent);font-size:28px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;}
+  .confirm h1{font-size:24px;}
+  .confirm p{color:var(--muted);font-size:14px;margin:8px 0 24px;}
+  .order-box{border:1px solid var(--line-soft);border-radius:10px;padding:20px;text-align:left;margin-bottom:28px;background:var(--panel);}
+  .order-box .row{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:8px;}
+
+  @media(max-width:820px){
+    .hero,.checkout-grid,.pdp{grid-template-columns:1fr;}
+    .grid,.benefits,.testimonials,.subscribe,.edu,.shop-grid,.cat-group.active{grid-template-columns:repeat(2,1fr);}
+    .foot-inner{grid-template-columns:1fr 1fr;}
+    .nav-links{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="logo">bite</div>
+    <nav class="nav-links">
+      <a href="#" class="active" data-nav="home">Home</a>
+      <a href="#" data-nav="shop">Shop</a>
+      <a href="#" onclick="return false;">Our Mission</a>
+      <a href="#" onclick="return false;">Quiz</a>
+      <a href="#" onclick="return false;">Sustainability</a>
+    </nav>
+    <div class="nav-right">
+      <a href="#" onclick="return false;">Account</a>
+      <button class="cart-btn" onclick="openCart()">Cart<span class="cart-count" id="cartCount">0</span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ================= HOME ================= -->
+  <section id="home" class="active">
+    <div class="hero">
+      <div>
+        <span class="eyebrow" style="text-align:left">Hero section</span>
+        <h1>Start Your Bite</h1>
+        <p>Dentist-formulated toothpaste bits that work as hard as the planet needs you to.</p>
+        <a href="#" class="btn" data-nav="shop">Shop Now</a>
+      </div>
+      <div class="ph">Hero image</div>
+    </div>
+
+    <span class="eyebrow">Featured products</span>
+    <div class="grid" id="featuredGrid"></div>
+
+    <span class="eyebrow" style="margin-top:56px;display:block;text-align:center;">Benefits / features</span>
+    <h2 class="section-title" style="margin-top:6px;">Why Bite Works</h2>
+    <div class="benefits">
+      <div class="benefit"><div class="ph">img</div><h3>Ingredients</h3><p>Clean, Dentist-Approved Formula — no SLS, no parabens, no mystery chemicals.</p></div>
+      <div class="benefit"><div class="ph">img</div><h3>Sustainability</h3><p>Plastic-Free. For Real. Ships in a refillable glass jar with compostable packaging.</p></div>
+      <div class="benefit"><div class="ph">img</div><h3>Efficacy</h3><p>Clinically Effective, Not Just Pretty. Remineralizes enamel, fights cavities.</p></div>
+      <div class="benefit"><div class="ph">img</div><h3>Convenience</h3><p>Brush Anywhere, Anytime. TSA-friendly, mess-free, travel-ready.</p></div>
+    </div>
+
+    <h2 class="section-title">Customer Testimonials</h2>
+    <p class="section-sub">10,000+ converts and counting — based on 10,422 reviews</p>
+    <div class="testimonials">
+      <div class="t-card"><div class="stars">★★★★★</div>"I've tried every eco-friendly dental product out there. Bite is the only one I've reordered three times."</div>
+      <div class="t-card"><div class="stars">★★★★★</div>"Genuinely didn't think toothpaste tablets could replace the tube. I was wrong — my teeth feel cleaner."</div>
+      <div class="t-card"><div class="stars">★★★★☆</div>"Love that it's plastic-free. The mint flavor is strong in a good way. Subscription makes it easy."</div>
+    </div>
+    <a href="#" class="center-link" onclick="return false;">Read all reviews</a>
+
+    <span class="eyebrow">Subscription information</span>
+    <h2 class="section-title" style="margin-top:6px;">Never Run Out. Never Overpay.</h2>
+    <div class="subscribe">
+      <div class="sub-card"><div class="ph">%</div><h3>20% Off Every Order</h3><p>Subscribers always pay less. No codes, no catch.</p></div>
+      <div class="sub-card"><div class="ph">↻</div><h3>Flexible Delivery</h3><p>Choose every 1, 2, or 3 months. Adjust anytime from your account.</p></div>
+      <div class="sub-card"><div class="ph">×</div><h3>Cancel Anytime</h3><p>No commitments, no fees. We earn your loyalty every refill.</p></div>
+    </div>
+
+    <span class="eyebrow">Educational content / resources</span>
+    <h2 class="section-title" style="margin-top:6px;">Know What Goes in Your Mouth</h2>
+    <p class="section-sub">Ingredient transparency isn't a feature. It's the baseline.</p>
+    <div class="edu">
+      <div class="edu-card"><div class="ph">img</div><div class="edu-body"><h3>Ingredient Education</h3><p>Our ingredient glossary breaks down every single thing in a Bite bit.</p><a class="edu-link" onclick="return false;">Read the Glossary</a></div></div>
+      <div class="edu-card"><div class="ph">img</div><div class="edu-body"><h3>Sustainability</h3><p>The Plastic Problem with Your Morning Routine.</p><a class="edu-link" onclick="return false;">Read More</a></div></div>
+      <div class="edu-card"><div class="ph">img</div><div class="edu-body"><h3>Efficacy Q&amp;A</h3><p>We get this question a lot. Here's an honest, science-backed answer.</p><a class="edu-link" onclick="return false;">Read More</a></div></div>
+    </div>
+    <a href="#" class="center-link" onclick="return false;">Visit the Learning Lab</a>
+
+    <span class="eyebrow">Newsletter signup</span>
+    <div class="newsletter">
+      <div id="nlForm">
+        <h2>Good for Your Teeth. Good for Your Inbox.</h2>
+        <p>Get 15% off your first order</p>
+        <div class="nl-form">
+          <input type="email" placeholder="Enter your email address" id="nlEmail">
+          <button class="btn" onclick="submitNewsletter()">Count Me In</button>
+        </div>
+        <p class="nl-note">We respect your privacy. No spam, no selling your data. Ever.</p>
+      </div>
+      <div id="nlConfirm" class="nl-confirm">
+        <div class="check">✓</div>
+        <h2>You're in. Check your inbox.</h2>
+        <p>Your 15% off code is on its way.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SHOP ================= -->
+  <section id="shop">
+    <h2 class="section-title">Shop</h2>
+    <div class="shop-tabs" id="shopTabs"></div>
+    <div id="shopCategories"></div>
+  </section>
+
+  <!-- ================= PRODUCT DETAIL ================= -->
+  <section id="pdp">
+    <p class="breadcrumb"><a href="#" data-nav="shop">Shop</a> / <span id="pdpCrumb"></span></p>
+    <div class="pdp">
+      <div class="ph" id="pdpImage">Product image</div>
+      <div>
+        <span class="pdp-badge" id="pdpBadge" style="display:none;"></span>
+        <h1 id="pdpName"></h1>
+        <p class="tagline" id="pdpTagline"></p>
+        <p class="rating" id="pdpRating"></p>
+        <p class="price" id="pdpPrice"></p>
+        <p class="desc" id="pdpDesc"></p>
+        <div class="sub-toggle">
+          <label><input type="radio" name="purch" checked> Subscribe &amp; save 20%</label>
+          <label><input type="radio" name="purch"> One-time purchase</label>
+        </div>
+        <div class="qty-row">
+          <div class="qty-box"><button onclick="changeQty(-1)">–</button><span id="pdpQty">1</span><button onclick="changeQty(1)">+</button></div>
+        </div>
+        <button class="btn block" onclick="addToCart()">Add to Bag</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CHECKOUT ================= -->
+  <section id="checkout">
+    <h2 class="section-title" style="margin-top:40px;">Checkout</h2>
+    <div class="checkout-grid">
+      <div>
+        <div class="co-block">
+          <h3>Shipping</h3>
+          <div class="field-row">
+            <div class="field"><label>First name</label><input placeholder="Jane"></div>
+            <div class="field"><label>Last name</label><input placeholder="Doe"></div>
+          </div>
+          <div class="field"><label>Address</label><input placeholder="123 Market St"></div>
+          <div class="field-row">
+            <div class="field"><label>City</label><input placeholder="Honolulu"></div>
+            <div class="field"><label>ZIP</label><input placeholder="96813"></div>
+          </div>
+        </div>
+        <div class="co-block">
+          <h3>Payment form</h3>
+          <div class="field"><label>Card number</label><input placeholder="•••• •••• •••• ••••"></div>
+          <div class="field-row">
+            <div class="field"><label>Expiry</label><input placeholder="MM / YY"></div>
+            <div class="field"><label>CVC</label><input placeholder="•••"></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="co-block">
+          <h3>Order summary</h3>
+          <div id="coItems"></div>
+          <div class="summary-row"><span>Subtotal</span><span id="coSubtotal">$0</span></div>
+          <div class="summary-row"><span>Shipping</span><span>Free</span></div>
+          <div class="summary-row total"><span>Total</span><span id="coTotal">$0</span></div>
+        </div>
+        <button class="btn block" onclick="placeOrder()">Place Order</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ORDER CONFIRMATION ================= -->
+  <section id="confirm">
+    <div class="confirm">
+      <div class="check">✓</div>
+      <h1>Success! Order placed.</h1>
+      <p>Success state with order number and summary.</p>
+      <div class="order-box">
+        <div class="row"><span>Order number</span><span id="ocNumber">—</span></div>
+        <div class="row"><span>Items</span><span id="ocItems">—</span></div>
+        <div class="row"><span>Total</span><span id="ocTotal">—</span></div>
+      </div>
+      <a href="#" class="btn" data-nav="home">Continue Shopping</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="foot-inner">
+    <div>
+      <div class="logo">bite</div>
+      <p style="margin-top:10px;">Your Teeth Deserve Better Than Plastic.</p>
+    </div>
+    <div><h4>Shop</h4><a onclick="return false;">Toothpaste Bits</a><a onclick="return false;">Mouthwash Bits</a><a onclick="return false;">Floss</a><a onclick="return false;">Bundles</a></div>
+    <div><h4>Company</h4><a onclick="return false;">Our Mission</a><a onclick="return false;">Sustainability</a><a onclick="return false;">Newsletter</a></div>
+    <div><h4>Account</h4><a onclick="return false;">Login</a><a onclick="return false;">Order History</a><a onclick="return false;">Subscriptions</a></div>
+  </div>
+</footer>
+
+<!-- ================= CART OVERLAY ================= -->
+<div class="cart-scrim" id="cartScrim" onclick="if(event.target===this)closeCart()">
+  <div class="cart-panel">
+    <div class="cart-head"><h3 style="margin:0;">Line items</h3><button class="cart-close" onclick="closeCart()">Close ✕</button></div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-foot">
+      <div class="cart-subtotal"><span>Sub-total</span><span id="cartSubtotal">$0</span></div>
+      <button class="btn block" onclick="goCheckout()">Checkout</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const PRODUCTS = {
+  "toothpaste": {
+    label: "Toothpaste Bits",
+    items: [
+      {id:"mint", name:"Mint Toothpaste Bits", tag:"The original Bite", price:30, priceLabel:"$30 / 3-month supply", rating:"4.8 (3,214 reviews)", badge:"Best Seller", desc:"The original Bite formula. Dentist-formulated, fluoride toothpaste bits that foam up just like paste, minus the tube."},
+      {id:"whitening", name:"Whitening Toothpaste Bits", tag:"Naturally whiter teeth in two weeks", price:32, priceLabel:"$32 / 3-month supply", rating:"4.7 (2,108 reviews)", badge:"Top Rated", desc:"Gently lifts surface stains with natural whitening agents while remineralizing enamel."},
+      {id:"charcoal", name:"Charcoal Toothpaste Bits", tag:"Deep-cleansing activated charcoal with a subtle mint finish", price:32, priceLabel:"$32 / 3-month supply", rating:"4.6 (1,547 reviews)", desc:"Detox your morning routine without ditching your standards."},
+      {id:"kids", name:"Kids Toothpaste Bits", tag:"Strawberry — fluoride-free and safe to swallow", price:28, priceLabel:"$28 / 3-month supply", rating:"4.8 (762 reviews)", desc:"A gentle, fruity formula made for smaller mouths and bigger smiles."},
+      {id:"sensitivity", name:"Sensitivity Toothpaste Bits", tag:"Gentle on exposed nerves, tough on plaque", price:34, priceLabel:"$34 / 3-month supply", rating:"4.7 (674 reviews)", desc:"Formulated with potassium nitrate to calm sensitivity over time."}
+    ]
+  },
+  "mouthwash": {
+    label: "Mouthwash Bits",
+    items: [
+      {id:"freshmint-mw", name:"Fresh Mint Mouthwash Bits", tag:"Alcohol-free, plastic-free, travel-ready", price:28, priceLabel:"$28 / 3-month supply", rating:"4.9 (892 reviews)", desc:"For those who prefer a fully natural approach to their daily clean."},
+      {id:"whitening-mw", name:"Whitening Mouthwash Bits", tag:"Brightens between brushes", price:30, priceLabel:"$30 / 3-month supply", rating:"4.4 (318 reviews)", desc:"Combines fresh breath protection with gentle whitening actives."}
+    ]
+  },
+  "floss": {
+    label: "Floss",
+    items: [
+      {id:"silk-floss", name:"Natural Silk Floss", tag:"Waxed with candelilla for smooth gliding", price:12, priceLabel:"$12 / refill", rating:"4.5 (541 reviews)", desc:"Smooth, strong, and biodegradable — refillable glass container included."},
+      {id:"corn-floss", name:"Vegan Corn Floss", tag:"Plant-based, biodegradable, and just as effective", price:12, priceLabel:"$12 / refill", rating:"4.7 (1,892 reviews)", desc:"A fully vegan floss alternative, plant-based and just as effective."}
+    ]
+  },
+  "bundles": {
+    label: "Bundles",
+    items: [
+      {id:"starter", name:"Starter Kit", tag:"Try all three toothpaste flavors. Glass jar included", price:45, priceLabel:"$45 / one-time", rating:"4.9 (2,891 reviews)", badge:"Most Popular", desc:"Everything you need to ditch the tube. Save $9 vs. buying separately."},
+      {id:"complete", name:"Complete Oral Care Bundle", tag:"Toothpaste Bits + Mouthwash Bits + Vegan Floss", price:72, priceLabel:"$72 / one-time", rating:"4.6 (1,547 reviews)", desc:"A full oral care routine in one glass-jar bundle."},
+      {id:"family", name:"Family Bundle", tag:"Adults + Kids Toothpaste Bits, Mouthwash Bits, and Floss", price:98, priceLabel:"$98 / one-time", rating:"4.8 (447 reviews)", badge:"Best Value", desc:"Enough for a family of four for three months, in one order."}
+    ]
+  }
+};
+
+let cart = [];
+let currentPdp = null;
+let currentQty = 1;
+
+function allProducts(){
+  return Object.values(PRODUCTS).flatMap(c => c.items);
+}
+
+function cardHTML(p){
+  return `<div class="p-card" onclick="openProduct('${p.id}')">
+    <div class="ph">${p.badge ? `<span class="badge">${p.badge}</span>` : ""}Image</div>
+    <div class="p-body">
+      <div class="p-name">${p.name}</div>
+      <div class="p-sub">${p.tag}</div>
+      <div class="p-meta"><span class="p-rating">${p.rating}</span><span class="p-price">${p.priceLabel}</span></div>
+      <button class="btn block" onclick="event.stopPropagation();openProduct('${p.id}')">View</button>
+    </div>
+  </div>`;
+}
+
+function buildHome(){
+  const featured = ["mint","whitening","charcoal"].map(id => allProducts().find(p=>p.id===id));
+  document.getElementById("featuredGrid").innerHTML = featured.map(cardHTML).join("");
+}
+
+function buildShop(){
+  const tabsEl = document.getElementById("shopTabs");
+  const catsEl = document.getElementById("shopCategories");
+  const keys = Object.keys(PRODUCTS);
+  tabsEl.innerHTML = keys.map((k,i)=>`<button class="shop-tab ${i===0?'active':''}" data-cat="${k}" onclick="selectCat('${k}')">${PRODUCTS[k].label}</button>`).join("");
+  catsEl.innerHTML = keys.map((k,i)=>`<div class="cat-group ${i===0?'active':''}" id="cat-${k}">${PRODUCTS[k].items.map(cardHTML).join("")}</div>`).join("");
+}
+
+function selectCat(key){
+  document.querySelectorAll(".shop-tab").forEach(b=>b.classList.toggle("active", b.dataset.cat===key));
+  document.querySelectorAll(".cat-group").forEach(g=>g.classList.toggle("active", g.id==="cat-"+key));
+}
+
+function navTo(id){
+  document.querySelectorAll("main > section").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.querySelectorAll(".nav-links a").forEach(a=>a.classList.toggle("active", a.dataset.nav===id));
+  window.scrollTo({top:0,behavior:"instant"});
+}
+
+document.querySelectorAll("[data-nav]").forEach(el=>{
+  el.addEventListener("click", e=>{ e.preventDefault(); navTo(el.dataset.nav); });
+});
+
+function openProduct(id){
+  const p = allProducts().find(x=>x.id===id);
+  currentPdp = p; currentQty = 1;
+  document.getElementById("pdpCrumb").textContent = p.name;
+  document.getElementById("pdpName").textContent = p.name;
+  document.getElementById("pdpTagline").textContent = p.tag;
+  document.getElementById("pdpRating").textContent = p.rating;
+  document.getElementById("pdpPrice").textContent = p.priceLabel;
+  document.getElementById("pdpDesc").textContent = p.desc;
+  document.getElementById("pdpQty").textContent = "1";
+  const badgeEl = document.getElementById("pdpBadge");
+  if(p.badge){ badgeEl.style.display="inline-block"; badgeEl.textContent = p.badge; } else { badgeEl.style.display="none"; }
+  navTo("pdp");
+}
+
+function changeQty(d){
+  currentQty = Math.max(1, currentQty + d);
+  document.getElementById("pdpQty").textContent = currentQty;
+}
+
+function addToCart(){
+  if(!currentPdp) return;
+  const existing = cart.find(c=>c.id===currentPdp.id);
+  if(existing){ existing.qty += currentQty; } else { cart.push({...currentPdp, qty: currentQty}); }
+  renderCart();
+  openCart();
+}
+
+function renderCart(){
+  const itemsEl = document.getElementById("cartItems");
+  const count = cart.reduce((s,c)=>s+c.qty,0);
+  document.getElementById("cartCount").textContent = count;
+  if(cart.length===0){
+    itemsEl.innerHTML = `<div class="cart-empty">Your cart is empty.</div>`;
+  } else {
+    itemsEl.innerHTML = cart.map(c=>`
+      <div class="cart-item">
+        <div class="ph">img</div>
+        <div class="cart-item-info">
+          <div class="name">${c.name}</div>
+          <div class="meta">Qty ${c.qty}</div>
+        </div>
+        <div class="cart-item-price">$${c.price * c.qty}</div>
+      </div>`).join("");
+  }
+  const subtotal = cart.reduce((s,c)=>s+c.price*c.qty,0);
+  document.getElementById("cartSubtotal").textContent = "$" + subtotal;
+}
+
+function openCart(){ document.getElementById("cartScrim").classList.add("open"); }
+function closeCart(){ document.getElementById("cartScrim").classList.remove("open"); }
+
+function goCheckout(){
+  closeCart();
+  const itemsEl = document.getElementById("coItems");
+  itemsEl.innerHTML = cart.map(c=>`
+    <div class="co-item"><div class="ph">img</div><div>${c.name} × ${c.qty}<br><strong>$${c.price*c.qty}</strong></div></div>
+  `).join("") || `<p class="summary-row">No items in cart.</p>`;
+  const subtotal = cart.reduce((s,c)=>s+c.price*c.qty,0);
+  document.getElementById("coSubtotal").textContent = "$" + subtotal;
+  document.getElementById("coTotal").textContent = "$" + subtotal;
+  navTo("checkout");
+}
+
+function placeOrder(){
+  const subtotal = cart.reduce((s,c)=>s+c.price*c.qty,0);
+  const count = cart.reduce((s,c)=>s+c.qty,0);
+  document.getElementById("ocNumber").textContent = "#BITE-" + Math.floor(10000 + Math.random()*89999);
+  document.getElementById("ocItems").textContent = count + " item" + (count===1?"":"s");
+  document.getElementById("ocTotal").textContent = "$" + subtotal;
+  cart = [];
+  renderCart();
+  navTo("confirm");
+}
+
+function submitNewsletter(){
+  document.getElementById("nlForm").style.display = "none";
+  document.getElementById("nlConfirm").classList.add("show");
+}
+
+buildHome();
+buildShop();
+renderCart();
+</script>
+</body>
+</html>
