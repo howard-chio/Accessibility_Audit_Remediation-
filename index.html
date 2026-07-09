@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Reef ID — Fish Species Gallery</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0E2A2E;
+    --ink-soft:#3E5A5C;
+    --mist:#7C9A9A;
+    --paper:#F6F4EC;
+    --paper-dim:#EDEADD;
+    --card:#FFFFFF;
+    --line:#DAD5C4;
+    --ocean:#0B4F5C;
+    --ocean-deep:#082E38;
+    --ocean-light:#E4EEEC;
+    --coral:#E8663F;
+    --radius:14px;
+    --shadow: 0 1px 2px rgba(14,42,46,0.06), 0 6px 20px rgba(14,42,46,0.08);
+    --shadow-lg: 0 4px 8px rgba(14,42,46,0.08), 0 16px 40px rgba(14,42,46,0.14);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{font-family:'Fraunces',serif;}
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;cursor:pointer;}
+  #topnav{
+    position:sticky;top:0;z-index:50;
+    background:var(--ocean-deep);
+    color:#EAF2F0;
+    border-bottom:1px solid rgba(255,255,255,0.08);
+  }
+  .nav-inner{
+    max-width:1120px;margin:0 auto;padding:14px 28px;
+    display:flex;align-items:center;justify-content:space-between;gap:24px;
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-size:19px;font-weight:600;letter-spacing:0.2px;}
+  .brand-mark{width:30px;height:30px;flex:none;}
+  .nav-links{display:flex;gap:6px;}
+  .nav-links button{
+    background:none;border:none;color:#C8DBD8;font-size:14px;font-weight:500;
+    padding:9px 14px;border-radius:8px;transition:background .15s, color .15s;
+  }
+  .nav-links button:hover{background:rgba(255,255,255,0.08);color:#fff;}
+  .nav-links button.active{background:rgba(255,255,255,0.14);color:#fff;}
+  .crumbbar{
+    background:var(--paper-dim);border-bottom:1px solid var(--line);
+    font-size:12.5px;color:var(--ink-soft);
+  }
+  .crumb-inner{max-width:1120px;margin:0 auto;padding:9px 28px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+  .crumb-inner a{color:var(--ocean);font-weight:500;}
+  .crumb-inner a:hover{text-decoration:underline;}
+  .crumb-sep{color:var(--mist);}
+  main{max-width:1120px;margin:0 auto;padding:0 28px 80px;}
+  .eyebrow{
+    font-size:12px;letter-spacing:0.08em;text-transform:uppercase;
+    color:var(--ink-soft);font-weight:600;margin:0 0 10px;
+  }
+  .section-title{font-size:26px;font-weight:600;margin:0 0 6px;}
+  .section-sub{font-size:15px;color:var(--ink-soft);margin:0 0 28px;max-width:640px;line-height:1.6;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;margin:0 -28px 0;padding:64px 28px 56px;
+    background:linear-gradient(180deg, var(--ocean-deep) 0%, var(--ocean) 62%, #12707F 100%);
+    color:#EAF6F3;overflow:hidden;
+  }
+  .hero-inner{max-width:1120px;margin:0 auto;position:relative;z-index:2;}
+  .hero-tag{
+    display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.12);
+    padding:6px 14px;border-radius:99px;font-size:12.5px;font-weight:500;margin-bottom:18px;
+  }
+  .hero h1{font-size:44px;line-height:1.08;font-weight:600;max-width:600px;margin:0 0 16px;}
+  .hero p{font-size:16.5px;line-height:1.65;max-width:520px;color:#CFE6E2;margin:0 0 28px;}
+  .hero-actions{display:flex;gap:12px;flex-wrap:wrap;}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:10px;
+    font-size:14.5px;font-weight:600;border:1px solid transparent;transition:transform .12s, opacity .12s;
+  }
+  .btn:active{transform:scale(0.98);}
+  .btn-primary{background:var(--coral);color:#fff;}
+  .btn-primary:hover{opacity:0.92;}
+  .btn-ghost{background:rgba(255,255,255,0.08);color:#fff;border-color:rgba(255,255,255,0.35);}
+  .btn-ghost:hover{background:rgba(255,255,255,0.16);}
+  .btn-outline{background:#fff;color:var(--ocean-deep);border-color:var(--line);}
+  .btn-outline:hover{background:var(--ocean-light);}
+  .hero-fish-row{position:absolute;right:-20px;bottom:-10px;display:flex;gap:0;opacity:0.9;z-index:1;}
+
+  /* ---------- CARDS / GRID ---------- */
+  .grid{display:grid;gap:20px;}
+  .grid-4{grid-template-columns:repeat(4,1fr);}
+  .grid-3{grid-template-columns:repeat(3,1fr);}
+  @media(max-width:900px){.grid-4{grid-template-columns:repeat(2,1fr);}.grid-3{grid-template-columns:repeat(2,1fr);}}
+
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    overflow:hidden;box-shadow:var(--shadow);transition:transform .16s ease, box-shadow .16s ease;
+    cursor:pointer;display:flex;flex-direction:column;
+  }
+  .card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);}
+  .card-media{aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;}
+  .card-body{padding:16px 16px 18px;}
+  .card-title{font-family:'Fraunces',serif;font-size:17px;font-weight:600;margin:0 0 3px;}
+  .card-latin{font-size:12px;color:var(--ink-soft);font-style:italic;margin:0 0 10px;}
+  .tag-row{display:flex;flex-wrap:wrap;gap:6px;}
+  .tag{
+    font-size:11px;font-weight:600;padding:4px 9px;border-radius:99px;
+    letter-spacing:0.01em;
+  }
+
+  section{margin:56px 0;}
+  section:first-of-type{margin-top:44px;}
+
+  /* ---------- FAMILY HEADER ---------- */
+  .fam-header{
+    margin:0 -28px 40px;padding:48px 28px 40px;color:#fff;position:relative;overflow:hidden;
+  }
+  .fam-header-inner{max-width:1120px;margin:0 auto;position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;}
+  .fam-header h1{font-size:36px;margin:0 0 8px;}
+  .fam-header .lat{font-style:italic;opacity:0.85;font-size:15px;margin:0 0 14px;}
+  .fam-header p{max-width:520px;font-size:15px;line-height:1.65;opacity:0.92;margin:0;}
+  .fam-stats{display:flex;gap:28px;}
+  .fam-stat b{display:block;font-size:24px;font-family:'Fraunces',serif;}
+  .fam-stat span{font-size:12px;opacity:0.8;}
+
+  /* ---------- DETAIL PAGE ---------- */
+  .detail-hero{
+    display:grid;grid-template-columns:340px 1fr;gap:36px;margin-bottom:44px;
+  }
+  @media(max-width:800px){.detail-hero{grid-template-columns:1fr;}}
+  .detail-media{
+    border-radius:16px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;
+    border:1px solid var(--line);box-shadow:var(--shadow);
+  }
+  .detail-info h1{font-size:32px;margin:0 0 4px;}
+  .detail-info .lat{font-style:italic;color:var(--ink-soft);font-size:15px;margin:0 0 18px;}
+  .detail-info p.lead{font-size:15.5px;line-height:1.7;color:var(--ink-soft);max-width:520px;}
+  .id-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:22px;}
+  .id-chip{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;}
+  .id-chip .k{font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);font-weight:600;margin:0 0 4px;}
+  .id-chip .v{font-size:14px;font-weight:500;margin:0;}
+  .info-section{margin-top:36px;padding-top:28px;border-top:1px solid var(--line);}
+  .info-section h3{font-size:17px;margin:0 0 8px;}
+  .info-section p{font-size:14.5px;line-height:1.75;color:var(--ink-soft);max-width:680px;margin:0;}
+
+  /* ---------- ABOUT ---------- */
+  .bio-card{
+    display:grid;grid-template-columns:180px 1fr;gap:28px;background:var(--card);
+    border:1px solid var(--line);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow);align-items:start;
+  }
+  @media(max-width:640px){.bio-card{grid-template-columns:1fr;}}
+  .avatar{width:100%;aspect-ratio:1/1;border-radius:50%;background:linear-gradient(160deg,var(--ocean),var(--ocean-deep));display:flex;align-items:center;justify-content:center;}
+  .cert-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+  .cert{font-size:11.5px;font-weight:600;background:var(--ocean-light);color:var(--ocean-deep);padding:5px 11px;border-radius:99px;}
+  .proj-list{display:grid;gap:14px;margin-top:22px;}
+  .proj-item{
+    display:grid;grid-template-columns:64px 1fr auto;gap:16px;align-items:center;
+    background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow);
+  }
+  .proj-icon{width:64px;height:64px;border-radius:10px;display:flex;align-items:center;justify-content:center;}
+  .proj-item h4{margin:0 0 3px;font-size:15px;}
+  .proj-item p{margin:0;font-size:13px;color:var(--ink-soft);}
+
+  /* ---------- CONTACT ---------- */
+  .contact-wrap{display:grid;grid-template-columns:1fr 320px;gap:32px;}
+  @media(max-width:800px){.contact-wrap{grid-template-columns:1fr;}}
+  .form-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:28px;box-shadow:var(--shadow);}
+  .field{margin-bottom:18px;}
+  .field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--ink);}
+  .field .hint{font-size:12px;color:var(--mist);font-weight:400;margin-left:6px;}
+  .field input, .field textarea{
+    width:100%;border:1px solid var(--line);border-radius:9px;padding:11px 13px;font-size:14px;
+    font-family:inherit;background:var(--paper);color:var(--ink);
+  }
+  .field input:focus, .field textarea:focus{outline:2px solid var(--ocean);outline-offset:1px;background:#fff;}
+  .field textarea{min-height:120px;resize:vertical;}
+  .side-card{background:var(--ocean-light);border-radius:var(--radius);padding:22px;font-size:13.5px;line-height:1.7;color:var(--ocean-deep);}
+  .side-card h4{margin:0 0 8px;font-size:15px;}
+
+  footer{border-top:1px solid var(--line);padding:26px 28px;text-align:center;font-size:12.5px;color:var(--mist);}
+</style>
+</head>
+<body>
+
+<nav id="topnav">
+  <div class="nav-inner">
+    <div class="brand"><svg class="brand-mark" viewBox="0 0 30 30"><circle cx="15" cy="15" r="15" fill="#12707F"/><path d="M6 16c3-5 9-7 14-4-2 4-8 7-14 4z" fill="#F6F4EC"/><circle cx="17" cy="14" r="1.3" fill="#0B4F5C"/></svg>Reef ID</div>
+    <div class="nav-links" id="navlinks"></div>
+  </div>
+</nav>
+<div class="crumbbar"><div class="crumb-inner" id="crumbs"></div></div>
+
+<main id="app"></main>
+
+<footer>Reef ID — a personal fish identification project · built for divers, by a diver</footer>
+
+<script>
+/* ---------------- DATA ---------------- */
+const FAMILIES = [
+  { id:"butterflyfish", name:"Butterflyfish", latin:"Chaetodontidae", color:"#C9791C", light:"#FBEFDD", dark:"#7A4A0F",
+    blurb:"Thin, disc-shaped bodies built for slipping between coral branches. Most feed on coral polyps and pair for life.",
+    shape:"Laterally compressed disc", region:"Indo-Pacific reefs", markings:"Eye bars, ocellated spots",
+    pattern:"stripe", species:[
+      {n:"Raccoon Butterflyfish", l:"Chaetodon lunula", size:"20 cm", depth:"1–30 m", markings:"Black eye mask, orange saddle", behavior:"Forages in pairs at night over rubble and sand for invertebrates.", habitat:"Lagoons and outer reef slopes across the Indo-Pacific."},
+      {n:"Threadfin Butterflyfish", l:"Chaetodon auriga", size:"23 cm", depth:"1–35 m", markings:"Trailing dorsal filament, black spot", behavior:"Picks at coral polyps and worms; often seen in loose pairs.", habitat:"Reef flats and sheltered lagoons with mixed coral and rubble."},
+      {n:"Copperband Butterflyfish", l:"Chelmon rostratus", size:"20 cm", depth:"1–25 m", markings:"Long snout, copper vertical bands", behavior:"Uses its elongated snout to pick at tubeworms and anemones in crevices.", habitat:"Turbid inshore reefs and rubble zones."},
+      {n:"Pyramid Butterflyfish", l:"Hemitaurichthys polylepis", size:"18 cm", depth:"3–35 m", markings:"White pyramid patch on flank", behavior:"Schools in open water to feed on drifting plankton, unusual for the family.", habitat:"Steep outer reef walls with strong current."},
+    ]},
+  { id:"surgeonfish", name:"Surgeonfish", latin:"Acanthuridae", color:"#2E6FA8", light:"#E3EEF8", dark:"#173F60",
+    blurb:"Named for the razor-sharp spine near the tail. Strong grazers that keep reef algae in check.",
+    shape:"Oval, deep-bodied", region:"Tropical reefs worldwide", markings:"Caudal spine, bold body color",
+    pattern:"solid", species:[
+      {n:"Blue Tang", l:"Paracanthurus hepatus", size:"31 cm", depth:"2–40 m", markings:"Vivid blue body, black palette pattern", behavior:"Grazes algae in small groups; darts into coral when threatened.", habitat:"Clear outer reef slopes with strong currents."},
+      {n:"Yellow Tang", l:"Zebrasoma flavescens", size:"20 cm", depth:"2–46 m", markings:"Solid bright yellow, thin tail spine", behavior:"Grazes algae solo or in loose schools along reef flats.", habitat:"Shallow rocky and coral reefs, Central Pacific."},
+      {n:"Convict Tang", l:"Acanthurus triostegus", size:"27 cm", depth:"0–90 m", markings:"Five vertical black bars", behavior:"Forms large grazing schools that overwhelm territorial damselfish.", habitat:"Shallow reef flats and surge zones."},
+      {n:"Powder Brown Tang", l:"Acanthurus japonicus", size:"21 cm", depth:"1–15 m", markings:"White muzzle, orange tail band", behavior:"Territorial grazer, often seen alone over rubble.", habitat:"Shallow reef crests with moderate surge."},
+    ]},
+  { id:"wrasses", name:"Wrasses", latin:"Labridae", color:"#6E52B8", light:"#EFEAFB", dark:"#3E2C7A",
+    blurb:"One of the most diverse reef families — from tiny cleaner wrasses to giant Napoleons. Many change sex and color through life.",
+    shape:"Elongated, torpedo-like", region:"Reefs worldwide", markings:"Highly variable, often iridescent",
+    pattern:"spot", species:[
+      {n:"Napoleon Wrasse", l:"Cheilinus undulatus", size:"up to 200 cm", depth:"1–60 m", markings:"Bulbous forehead hump, blue facial lines", behavior:"Slow, curious giant that patrols reef walls hunting crustaceans.", habitat:"Outer reef slopes and drop-offs; often endangered locally."},
+      {n:"Cleaner Wrasse", l:"Labroides dimidiatus", size:"11 cm", depth:"1–40 m", markings:"Black lateral stripe, blue accents", behavior:"Runs cleaning stations, removing parasites from client fish.", habitat:"Reef crests near coral heads that serve as cleaning stations."},
+      {n:"Bird Wrasse", l:"Gomphosus varius", size:"28 cm", depth:"1–30 m", markings:"Long tapered snout", behavior:"Uses its beak-like mouth to extract prey from tight crevices.", habitat:"Coral-rich lagoons and seaward reefs."},
+      {n:"Clown Coris", l:"Coris aygula", size:"120 cm", depth:"2–30 m", markings:"Juvenile: orange with white saddles", behavior:"Juveniles mimic flatworms as a defense; adults forage over sand.", habitat:"Sandy patches near reef, lagoons to outer slopes."},
+    ]},
+  { id:"angelfish", name:"Angelfish", latin:"Pomacanthidae", color:"#C24B78", light:"#FBEAF1", dark:"#7A2748",
+    blurb:"Bold, plate-like bodies and striking color changes from juvenile to adult make this family a favorite for ID practice.",
+    shape:"Deep, disc-shaped", region:"Tropical reefs worldwide", markings:"Concentric rings, bold color blocks",
+    pattern:"stripe", species:[
+      {n:"Emperor Angelfish", l:"Pomacanthus imperator", size:"40 cm", depth:"1–70 m", markings:"Diagonal blue-yellow stripes, black eye mask", behavior:"Territorial, grazes sponges and tunicates along reef walls.", habitat:"Outer reef slopes and drop-offs."},
+      {n:"Queen Angelfish", l:"Holacanthus ciliaris", size:"45 cm", depth:"2–70 m", markings:"Blue-ringed crown spot", behavior:"Pairs patrol a defended territory feeding mainly on sponges.", habitat:"Coral reefs of the tropical Western Atlantic."},
+      {n:"Regal Angelfish", l:"Pygoplites diacanthus", size:"25 cm", depth:"1–50 m", markings:"Vertical orange-white-blue bands", behavior:"Shy and reclusive, retreats into crevices when approached.", habitat:"Sheltered lagoon and seaward reefs."},
+      {n:"Blue-ring Angelfish", l:"Pomacanthus annularis", size:"38 cm", depth:"1–60 m", markings:"Blue rings, yellow-edged fins", behavior:"Solitary grazer of sponges and algae near reef structure.", habitat:"Turbid coastal reefs and harbors."},
+    ]},
+  { id:"parrotfish", name:"Parrotfish", latin:"Scaridae", color:"#2E8E63", light:"#E4F4EC", dark:"#164D36",
+    blurb:"Fused beak-like teeth let parrotfish scrape algae from rock and coral, producing much of a reef's white sand.",
+    shape:"Robust, cylindrical", region:"Tropical reefs worldwide", markings:"Beak-like mouth, scale patterning",
+    pattern:"spot", species:[
+      {n:"Bicolor Parrotfish", l:"Cetoscarus bicolor", size:"90 cm", depth:"1–30 m", markings:"Terminal phase: green body, pink head patch", behavior:"Grazes coral rock, contributing to sand production.", habitat:"Coral-rich outer reef slopes."},
+      {n:"Steephead Parrotfish", l:"Chlorurus microrhinos", size:"70 cm", depth:"1–40 m", markings:"Steep bony forehead, blue-green body", behavior:"Bites into hard coral to feed on algae within.", habitat:"Exposed outer reef flats and slopes."},
+      {n:"Bumphead Parrotfish", l:"Bolbometopon muricatum", size:"130 cm", depth:"1–35 m", markings:"Large bony head bump", behavior:"Travels in schools, capable of excavating live coral.", habitat:"Steep outer reefs and channels."},
+      {n:"Stoplight Parrotfish", l:"Sparisoma viride", size:"64 cm", depth:"3–50 m", markings:"Yellow tail spot on terminal males", behavior:"Changes sex and color dramatically through life stages.", habitat:"Caribbean coral reefs and seagrass edges."},
+    ]},
+  { id:"triggerfish", name:"Triggerfish", latin:"Balistidae", color:"#B14A28", light:"#FAE9E0", dark:"#6B2A14",
+    blurb:"Named for a locking dorsal spine used to wedge into crevices. Powerful jaws crush shelled prey with ease.",
+    shape:"Deep, laterally flattened", region:"Tropical reefs worldwide", markings:"Bold facial patterns, leathery skin",
+    pattern:"stripe", species:[
+      {n:"Titan Triggerfish", l:"Balistoides viridescens", size:"75 cm", depth:"1–50 m", markings:"Yellow scale outlines, dark saddle", behavior:"Fiercely guards nest sites and may charge divers who stray too close.", habitat:"Sandy areas near reef, nesting in shallow craters."},
+      {n:"Picasso Triggerfish", l:"Rhinecanthus aculeatus", size:"25 cm", depth:"1–20 m", markings:"Geometric black-white-yellow face pattern", behavior:"Digs in sand for invertebrates, territorial over burrows.", habitat:"Shallow lagoons and reef flats."},
+      {n:"Clown Triggerfish", l:"Balistoides conspicillum", size:"50 cm", depth:"3–75 m", markings:"White polka dots on dark belly", behavior:"Solitary hunter of hard-shelled invertebrates on reef slopes.", habitat:"Steep outer reef drop-offs."},
+      {n:"Redtooth Triggerfish", l:"Odonus niger", size:"50 cm", depth:"2–40 m", markings:"Deep blue body, red teeth", behavior:"Forms large plankton-feeding schools above the reef.", habitat:"Current-swept outer reef slopes."},
+    ]},
+];
+
+const PATTERNS = { stripe:"stripe", solid:"solid", spot:"spot" };
+
+/* ---------------- FISH ICON ---------------- */
+function fishSVG(color, light, dark, pattern, size){
+  const uid = "f"+Math.random().toString(36).slice(2,8);
+  let overlay = "";
+  if(pattern==="stripe"){
+    overlay = `<g clip-path="url(#${uid})">
+      <rect x="18" y="30" width="7" height="40" fill="${dark}" opacity="0.55"/>
+      <rect x="34" y="30" width="7" height="40" fill="${dark}" opacity="0.55"/>
+      <rect x="50" y="30" width="7" height="40" fill="${dark}" opacity="0.55"/>
+    </g>`;
+  } else if(pattern==="spot"){
+    overlay = `<g clip-path="url(#${uid})">
+      <circle cx="30" cy="42" r="4" fill="${dark}" opacity="0.5"/>
+      <circle cx="46" cy="55" r="5" fill="${dark}" opacity="0.5"/>
+      <circle cx="58" cy="40" r="3.5" fill="${dark}" opacity="0.5"/>
+      <circle cx="38" cy="62" r="3" fill="${dark}" opacity="0.5"/>
+    </g>`;
+  }
+  return `<svg width="${size}" height="${size}" viewBox="0 0 100 100" role="img" aria-label="Illustrated fish icon">
+    <defs><clipPath id="${uid}"><ellipse cx="45" cy="50" rx="30" ry="20"/></clipPath></defs>
+    <polygon points="70,50 92,34 92,66" fill="${dark}" opacity="0.85"/>
+    <ellipse cx="45" cy="50" rx="30" ry="20" fill="${color}"/>
+    ${overlay}
+    <path d="M40 32 Q48 18 58 30 Q50 34 40 32Z" fill="${dark}" opacity="0.7"/>
+    <circle cx="28" cy="46" r="3.4" fill="${light}"/>
+    <circle cx="27" cy="46" r="1.6" fill="${dark}"/>
+  </svg>`;
+}
+
+function photoOrIcon(binomial, iconSvg){
+  const filename = binomial.trim().replace(/ /g,"_") + ".jpg";
+  const url = "https://commons.wikimedia.org/wiki/Special:FilePath/" + encodeURIComponent(filename);
+  const uid = "ph" + Math.random().toString(36).slice(2,9);
+  return `<div style="position:relative;width:100%;height:100%;">
+    <img src="${url}" alt="${binomial}" loading="lazy"
+         style="width:100%;height:100%;object-fit:cover;display:block;"
+         onerror="this.style.display='none';var f=document.getElementById('${uid}');if(f)f.style.display='flex';">
+    <div id="${uid}" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;">${iconSvg}</div>
+  </div>`;
+}
+
+/* ---------------- ROUTER ---------------- */
+let stack = [{page:"home"}];
+
+function navigate(page, params){
+  stack.push({page, ...params});
+  render();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+function goCrumb(idx){
+  stack = stack.slice(0, idx+1);
+  render();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+function resetTo(page){
+  stack = [{page}];
+  render();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+const NAV_ITEMS = [
+  {id:"home", label:"Home"},
+  {id:"gallery", label:"Species Gallery"},
+  {id:"about", label:"About"},
+  {id:"contact", label:"Contact"},
+];
+
+function renderNav(current){
+  const el = document.getElementById("navlinks");
+  el.innerHTML = NAV_ITEMS.map(n =>
+    `<button class="${current===n.id?'active':''}" onclick="resetTo('${n.id}')">${n.label}</button>`
+  ).join("");
+}
+
+function renderCrumbs(){
+  const el = document.getElementById("crumbs");
+  const labels = stack.map((s,i) => {
+    let label = s.page[0].toUpperCase()+s.page.slice(1);
+    if(s.page==="family"){ label = FAMILIES.find(f=>f.id===s.famId).name; }
+    if(s.page==="detail"){ const f=FAMILIES.find(f=>f.id===s.famId); label = f.species[s.spIdx].n; }
+    if(s.page==="home"){ label = "Home"; }
+    if(s.page==="gallery"){ label = "Species Gallery"; }
+    return `<a onclick="goCrumb(${i})">${label}</a>`;
+  });
+  el.innerHTML = labels.join('<span class="crumb-sep">/</span>');
+}
+
+/* ---------------- PAGE RENDERERS ---------------- */
+function pageHome(){
+  const preview = FAMILIES.slice(0,4);
+  return `
+  <div class="hero">
+    <div class="hero-inner">
+      <span class="hero-tag">Diver-built field guide</span>
+      <h1>Know what's swimming past you.</h1>
+      <p>A visual fish identification project for divers — browse reef fish by family, compare markings, and build recognition dive after dive.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="resetTo('gallery')">Browse species gallery</button>
+        <button class="btn btn-ghost" onclick="resetTo('about')">About this project</button>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <p class="eyebrow">Featured families</p>
+    <h2 class="section-title">Start with a family you recognize</h2>
+    <p class="section-sub">Each family page groups species by shared body shape and behavior, then links out to a detail page for every fish.</p>
+    <div class="grid grid-4">
+      ${preview.map(f => `
+        <div class="card" onclick="navigate('family',{famId:'${f.id}'})">
+          <div class="card-media" style="background:${f.light}">
+            ${photoOrIcon(f.species[0].l, fishSVG(f.color, f.light, f.dark, f.pattern, 96))}
+          </div>
+          <div class="card-body">
+            <p class="card-title">${f.name}</p>
+            <p class="card-latin">${f.latin}</p>
+            <div class="tag-row"><span class="tag" style="background:${f.light};color:${f.dark}">${f.species.length} species</span></div>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">About the diver</p>
+    <div class="bio-card">
+      <div class="avatar">${fishSVG("#E4EEEC","#fff","#0B4F5C","solid",70)}</div>
+      <div>
+        <h3 style="margin:0 0 8px;font-size:19px;">Hi, I'm your dive guide</h3>
+        <p style="margin:0;font-size:14.5px;line-height:1.75;color:var(--ink-soft);max-width:560px;">
+          I'm a passionate diver dedicated to helping others explore and understand the underwater world.
+          With certifications in Advanced Open Water and Enriched Air Diver, I enjoy studying marine life —
+          especially fish families and their unique traits. Through my personal projects, I aim to make fish
+          identification clearer, accessible, and enjoyable for divers at any level.
+        </p>
+        <div class="cert-row">
+          <span class="cert">Advanced Open Water</span>
+          <span class="cert">Enriched Air Diver</span>
+          <span class="cert">Fish ID enthusiast</span>
+        </div>
+      </div>
+    </div>
+  </section>
+  `;
+}
+
+function pageGallery(){
+  return `
+  <section style="margin-top:44px;">
+    <p class="eyebrow">Species gallery</p>
+    <h2 class="section-title">Browse reef fish by family</h2>
+    <p class="section-sub">Grouping by family reinforces the patterns divers rely on most — body shape, fin structure, and behavior. Pick the family you spotted on your last dive.</p>
+    <div class="grid grid-3">
+      ${FAMILIES.map(f => `
+        <div class="card" onclick="navigate('family',{famId:'${f.id}'})">
+          <div class="card-media" style="background:${f.light}">
+            ${photoOrIcon(f.species[0].l, fishSVG(f.color, f.light, f.dark, f.pattern, 110))}
+          </div>
+          <div class="card-body">
+            <p class="card-title">${f.name}</p>
+            <p class="card-latin">${f.latin}</p>
+            <div class="tag-row">
+              <span class="tag" style="background:${f.light};color:${f.dark}">${f.shape}</span>
+              <span class="tag" style="background:var(--paper-dim);color:var(--ink-soft)">${f.species.length} species</span>
+            </div>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+  </section>
+  `;
+}
+
+function pageFamily(famId){
+  const f = FAMILIES.find(x=>x.id===famId);
+  return `
+  <div class="fam-header" style="background:linear-gradient(135deg, ${f.dark}, ${f.color});">
+    <div class="fam-header-inner">
+      <div>
+        <h1>${f.name}</h1>
+        <p class="lat">${f.latin}</p>
+        <p>${f.blurb}</p>
+      </div>
+      <div class="fam-stats">
+        <div class="fam-stat"><b>${f.species.length}</b><span>species shown</span></div>
+        <div class="fam-stat"><b>${f.region.split(" ")[0]}</b><span>${f.region}</span></div>
+      </div>
+    </div>
+  </div>
+
+  <section style="margin-top:0;">
+    <p class="eyebrow">Quick ID for this family</p>
+    <div class="id-grid" style="max-width:640px;">
+      <div class="id-chip"><p class="k">Body shape</p><p class="v">${f.shape}</p></div>
+      <div class="id-chip"><p class="k">Common region</p><p class="v">${f.region}</p></div>
+      <div class="id-chip"><p class="k">Key markings</p><p class="v">${f.markings}</p></div>
+      <div class="id-chip"><p class="k">Family</p><p class="v">${f.latin}</p></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Species in this family</p>
+    <h2 class="section-title">Expanded photo grid</h2>
+    <p class="section-sub">Tap any fish to open its dedicated ID page with markings, behavior, and habitat detail.</p>
+    <div class="grid grid-4">
+      ${f.species.map((sp,i) => `
+        <div class="card" onclick="navigate('detail',{famId:'${f.id}', spIdx:${i}})">
+          <div class="card-media" style="background:${f.light}">
+            ${photoOrIcon(sp.l, fishSVG(f.color, f.light, f.dark, f.pattern, 90))}
+          </div>
+          <div class="card-body">
+            <p class="card-title">${sp.n}</p>
+            <p class="card-latin">${sp.l}</p>
+            <div class="tag-row">
+              <span class="tag" style="background:${f.light};color:${f.dark}">${sp.size}</span>
+            </div>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+  </section>
+  `;
+}
+
+function pageDetail(famId, spIdx){
+  const f = FAMILIES.find(x=>x.id===famId);
+  const sp = f.species[spIdx];
+  return `
+  <section style="margin-top:36px;">
+    <button class="btn btn-outline" style="margin-bottom:26px;" onclick="navigate('family',{famId:'${f.id}'})">&larr; Back to ${f.name}</button>
+    <div class="detail-hero">
+      <div class="detail-media" style="background:${f.light}">
+        ${photoOrIcon(sp.l, fishSVG(f.color, f.light, f.dark, f.pattern, 190))}
+      </div>
+      <div class="detail-info">
+        <span class="tag" style="background:${f.light};color:${f.dark};margin-bottom:10px;display:inline-block;">${f.name} family</span>
+        <h1>${sp.n}</h1>
+        <p class="lat">${sp.l}</p>
+        <p class="lead">Part of the ${f.name} family (${f.latin}), identifiable by its ${f.shape.toLowerCase()} and ${sp.markings.toLowerCase()}.</p>
+        <div class="id-grid">
+          <div class="id-chip"><p class="k">Body shape</p><p class="v">${f.shape}</p></div>
+          <div class="id-chip"><p class="k">Max size</p><p class="v">${sp.size}</p></div>
+          <div class="id-chip"><p class="k">Depth range</p><p class="v">${sp.depth}</p></div>
+          <div class="id-chip"><p class="k">Key markings</p><p class="v">${sp.markings}</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <h3>Behavior</h3>
+      <p>${sp.behavior}</p>
+    </div>
+    <div class="info-section">
+      <h3>Habitat</h3>
+      <p>${sp.habitat}</p>
+    </div>
+    <div class="info-section">
+      <h3>Family context</h3>
+      <p>${f.blurb}</p>
+    </div>
+  </section>
+  `;
+}
+
+function pageAbout(){
+  return `
+  <section style="margin-top:44px;">
+    <p class="eyebrow">About</p>
+    <h2 class="section-title">Why Reef ID exists</h2>
+    <p class="section-sub">The Fish Species Gallery is a visual learning project designed to help divers quickly recognize common reef fish families. It features clear photos, key identification traits, and user-friendly navigation. The goal is to simplify fish ID practice and support divers preparing for the PADI AWARE – Fish Identification specialty.</p>
+
+    <div class="bio-card">
+      <div class="avatar">${fishSVG("#E4EEEC","#fff","#0B4F5C","spot",70)}</div>
+      <div>
+        <h3 style="margin:0 0 8px;font-size:19px;">The diver behind the project</h3>
+        <p style="margin:0;font-size:14.5px;line-height:1.75;color:var(--ink-soft);max-width:560px;">
+          I'm a passionate diver dedicated to helping others explore and understand the underwater world.
+          With certifications in Advanced Open Water and Enriched Air Diver, I enjoy studying marine life —
+          especially fish families and their unique traits. Through my personal projects, I aim to make fish
+          identification clearer, accessible, and enjoyable for divers at any level.
+        </p>
+        <div class="cert-row">
+          <span class="cert">Advanced Open Water</span>
+          <span class="cert">Enriched Air Diver</span>
+          <span class="cert">Fish ID enthusiast</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Projects</p>
+    <h2 class="section-title">Portfolio</h2>
+    <div class="proj-list">
+      <div class="proj-item">
+        <div class="proj-icon" style="background:${FAMILIES[2].light}">${fishSVG(FAMILIES[2].color, FAMILIES[2].light, FAMILIES[2].dark, "spot", 44)}</div>
+        <div><h4>Reef ID species gallery</h4><p>Family-based fish identification grid with linked detail pages.</p></div>
+        <button class="btn btn-outline" onclick="resetTo('gallery')">Open</button>
+      </div>
+      <div class="proj-item">
+        <div class="proj-icon" style="background:${FAMILIES[0].light}">${fishSVG(FAMILIES[0].color, FAMILIES[0].light, FAMILIES[0].dark, "stripe", 44)}</div>
+        <div><h4>PADI AWARE prep notes</h4><p>Study companion for the Fish Identification specialty course.</p></div>
+        <button class="btn btn-outline" onclick="resetTo('contact')">Ask about it</button>
+      </div>
+      <div class="proj-item">
+        <div class="proj-icon" style="background:${FAMILIES[4].light}">${fishSVG(FAMILIES[4].color, FAMILIES[4].light, FAMILIES[4].dark, "spot", 44)}</div>
+        <div><h4>Dive log & sightings map</h4><p>In progress — tracking family sightings across recent dive sites.</p></div>
+        <button class="btn btn-outline" onclick="resetTo('contact')">Get updates</button>
+      </div>
+    </div>
+  </section>
+  `;
+}
+
+function pageContact(){
+  return `
+  <section style="margin-top:44px;">
+    <p class="eyebrow">Contact</p>
+    <h2 class="section-title">Get in touch</h2>
+    <p class="section-sub">Questions about a species, a dive site sighting, or the project itself — send a note below.</p>
+    <div class="contact-wrap">
+      <div class="form-card">
+        <div class="field">
+          <label for="cf-name">Name</label>
+          <input id="cf-name" type="text" placeholder="Your name">
+        </div>
+        <div class="field">
+          <label for="cf-email">Email</label>
+          <input id="cf-email" type="email" placeholder="you@example.com">
+        </div>
+        <div class="field">
+          <label for="cf-message">Message</label>
+          <textarea id="cf-message" placeholder="What did you see, or what do you want to know?"></textarea>
+        </div>
+        <button class="btn btn-primary" type="button" onclick="alert('This is a wireframe — form submission is not wired up yet.')">Send message</button>
+      </div>
+      <div class="side-card">
+        <h4>Before you write</h4>
+        <p>For a fast ID, include the dive site, approximate depth, and one standout marking — that's usually enough to narrow it to a family.</p>
+      </div>
+    </div>
+  </section>
+  `;
+}
+
+/* ---------------- MAIN RENDER ---------------- */
+function render(){
+  const top = stack[stack.length-1];
+  const app = document.getElementById("app");
+  renderNav(top.page==="family"||top.page==="detail" ? "gallery" : top.page);
+  renderCrumbs();
+  if(top.page==="home") app.innerHTML = pageHome();
+  else if(top.page==="gallery") app.innerHTML = pageGallery();
+  else if(top.page==="family") app.innerHTML = pageFamily(top.famId);
+  else if(top.page==="detail") app.innerHTML = pageDetail(top.famId, top.spIdx);
+  else if(top.page==="about") app.innerHTML = pageAbout();
+  else if(top.page==="contact") app.innerHTML = pageContact();
+}
+render();
+</script>
+</body>
+</html>
