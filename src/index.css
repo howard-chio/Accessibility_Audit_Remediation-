@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  --color-ocean-950: #030a14;
+  --color-ocean-900: #071525;
+  --color-ocean-800: #0d2038;
+  --color-ocean-700: #122b4d;
+  --color-ocean-600: #1a3a65;
+  --color-ocean-500: #2256a0;
+  --color-ocean-400: #3b77c8;
+  --color-ocean-300: #6eaae0;
+  --color-ocean-200: #a8d4f5;
+  --color-ocean-100: #ddf0fc;
+  --color-ocean-50: #f0f9ff;
+
+  --color-reef-amber: #f59e0b;
+  --color-reef-cyan: #0891b2;
+  --color-reef-indigo: #6366f1;
+  --color-reef-orange: #ea580c;
+  --color-reef-emerald: #059669;
+  --color-reef-violet: #7c3aed;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #071525;
+  color: #e8f4fd;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #071525;
+}
+::-webkit-scrollbar-thumb {
+  background: #2256a0;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3b77c8;
+}
+
+/* Smooth scrollbar fade */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2256a0 #071525;
+}
